@@ -106,6 +106,8 @@ void MainWindow::on_btnAdd_clicked()
     QPointF curPoint;
     double halfWidth = (r.width()/2) + 1;
     double halfHeight = (r.height()/2) + 1;
+    double smallPolyW = r.width() / 6.0;
+    double smallPolyH = r.height() / 6.0;
 
     int Surplus = 0;
 
@@ -117,7 +119,7 @@ void MainWindow::on_btnAdd_clicked()
     for(int i = 1; i <= nbCotes; i++)
     {
         rad = ((((360.0/nbCotes)*i)+Surplus) * PI)/180.0;
-        curPoint.setX( halfWidth - (sin(rad) * halfWidth));
+        curPoint.setX(halfWidth - (sin(rad) * halfWidth));
         curPoint.setY(halfHeight - (cos(rad) * halfHeight));
 
         forme[i] = curPoint;
@@ -125,19 +127,26 @@ void MainWindow::on_btnAdd_clicked()
     }
 
     double oldrad = ((((360.0/nbCotes)/2.0)+Surplus) * PI)/180.0;
-    prevPoint.setX(halfWidth - (sin(oldrad) * (r.width()/6.0)));
-    prevPoint.setY(halfHeight - (cos(oldrad) * (r.height()/6.0)));
+    prevPoint.setX(halfWidth - (sin(oldrad) * smallPolyW));
+    prevPoint.setY(halfHeight - (cos(oldrad) * smallPolyH));
 
     for(int j = 1; j <= nbCotes; j++)
     {
-        m_listLines.push_back(scene->addLine(prevPoint.x(), prevPoint.y(), forme.at(j).x(), forme.at(j).y(), pen));
+        //première ligne qui part du milieu en haut
+        m_listLines.push_back(scene->addLine(QLineF(prevPoint, forme.at(j)), pen));
 
         rad = oldrad + ((((360.0 / nbCotes) * j)) * PI)/180.0;
-        curPoint.setX(halfWidth - (sin(rad) * (r.width()/6)));
-        curPoint.setY(halfHeight - (cos(rad) * (r.height()/6)));
+        curPoint.setX(halfWidth - (sin(rad) * smallPolyW));
+        curPoint.setY(halfHeight - (cos(rad) * smallPolyH));
 
-        m_listLines.push_back(scene->addLine(prevPoint.x(), prevPoint.y(),curPoint.x(), curPoint.y(), pen));
-        m_listLines.push_back(scene->addLine(curPoint.x(), curPoint.y(), forme.at(j).x(), forme.at(j).y(), pen));
+        //2eme ligne qui part du coin et rejoin le prochain point
+        m_listLines.push_back(scene->addLine(QLineF(curPoint, forme.at(j)), pen));
+
+        //petite ligne au milieu
+        m_listLines.push_back(scene->addLine(QLineF(prevPoint, curPoint), pen));
+
+
+
         prevPoint = curPoint;
     }
 }
