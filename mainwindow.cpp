@@ -22,6 +22,31 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    init();
+}
+
+void MainWindow::init() {
+    addMedia("C:/dev/Polyrhythm/1.wav");
+    addMedia("C:/dev/Polyrhythm/2.wav");
+    addMedia("C:/dev/Polyrhythm/3.wav");
+    addMedia("C:/dev/Polyrhythm/1.wav");
+    addMedia("C:/dev/Polyrhythm/4.wav");
+    addMedia("C:/dev/Polyrhythm/2.wav");
+    addMedia("C:/dev/Polyrhythm/1.wav");
+    addMedia("C:/dev/Polyrhythm/2.wav");
+
+    /*m_listPlayers[3]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/1.wav"));
+    m_listPlayers[4]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/2.wav"));
+    m_listPlayers[5]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/3.wav"));
+    m_listPlayers[6]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/1.wav"));
+    m_listPlayers[7]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/4.wav"));
+    m_listPlayers[8]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/2.wav"));*/
+}
+
+void MainWindow::addMedia(const QString& pathToMedia){
+    auto player = m_listPlayers.insert(m_listPlayers.count()+1, new QMediaPlayer(this));
+    m_listPlayers[m_listPlayers.count()]->setVolume(100);
+    m_listPlayers[m_listPlayers.count()]->setMedia(QUrl::fromLocalFile(pathToMedia));
 }
 
 MainWindow::~MainWindow()
@@ -52,39 +77,32 @@ void MainWindow::on_btnAdd_clicked()
     scene->addLine(r.width()/2, r.height()/2, r.width()/2, r.height()/2, QPen(Qt::red));
     QPen pen;
 
-    m_listPlayers.insert(nbCotes, new QMediaPlayer(this));
-    m_listPlayers[nbCotes]->setVolume(100);
     switch(nbCotes)
     {
         case 3:
-            m_listPlayers[nbCotes]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/1.wav"));
             pen = QPen(Qt::blue);
             break;
         case 4:
-            m_listPlayers[nbCotes]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/2.wav"));
             pen = QPen(Qt::red);
             break;
         case 5:
-            m_listPlayers[nbCotes]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/3.wav"));
             pen = QPen(Qt::green);
             break;
         case 6:
-            m_listPlayers[nbCotes]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/1.wav"));
             pen = QPen(Qt::cyan);
             break;
         case 7:
-            m_listPlayers[nbCotes]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/4.wav"));
             pen = QPen(Qt::gray);
             break;
         case 8:
-            m_listPlayers[nbCotes]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/2.wav"));
             pen = QPen(Qt::black);
             break;
         default:
             pen = QPen(Qt::blue);
             break;
     }
-    pen.setWidth(2);
+
+    pen.setWidth(1);
 
     //formes a ajouter
     double x = 0;
@@ -143,11 +161,6 @@ void MainWindow::on_btnClear_clicked()
 {
     m_speedTimer->stop();
     ui->graphicsView->scene()->clear();
-
-    for(auto player : m_listPlayers) {
-        player->deleteLater();
-    }
-    m_listPlayers.clear();
 
     m_listLines.clear();
 }

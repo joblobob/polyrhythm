@@ -28,6 +28,10 @@ private slots:
     void on_m_tstSpd_textChanged(const QString &arg1);
 
 private:
+
+    void init();
+    void addMedia(const QString& pathToMedia);
+
     Ui::MainWindow *ui;
 
     QGraphicsEllipseItem * m_bigCircle;
