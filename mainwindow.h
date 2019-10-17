@@ -15,8 +15,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-    void setPenColor(int nbCotes, QPen& pen);
     
 private slots:
     void on_btnAdd_clicked();
@@ -40,6 +38,7 @@ private:
     QGraphicsEllipseItem * m_smallCircle;
     QGraphicsEllipseItem * m_dotCircle;
     QVector<QGraphicsLineItem*> m_listLines;
+    QVector<QPen> m_pens;
     double m_pct;
     bool m_play;
     int m_spd;

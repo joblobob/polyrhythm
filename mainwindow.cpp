@@ -34,6 +34,25 @@ void MainWindow::init() {
     addMedia("C:/dev/Polyrhythm/2.wav");
     addMedia("C:/dev/Polyrhythm/1.wav");
     addMedia("C:/dev/Polyrhythm/2.wav");
+
+    m_pens << QPen(Qt::black)
+           << QPen(Qt::black)
+           << QPen(Qt::black)
+           << QPen(Qt::blue)
+           << QPen(Qt::red)
+           << QPen(Qt::green)
+           << QPen(Qt::cyan)
+           << QPen(Qt::gray)
+           << QPen(Qt::blue)
+           << QPen(Qt::darkRed)
+           << QPen(Qt::darkBlue)
+           << QPen(Qt::darkGray)
+           << QPen(Qt::darkCyan)
+           << QPen(Qt::darkGreen)
+           << QPen(Qt::darkMagenta)
+           << QPen(Qt::black)
+           << QPen(Qt::black);
+
 }
 
 void MainWindow::addMedia(const QString& pathToMedia){
@@ -45,34 +64,6 @@ void MainWindow::addMedia(const QString& pathToMedia){
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::setPenColor(int nbCotes, QPen& pen)
-{
-    switch(nbCotes)
-    {
-        case 3:
-            pen = QPen(Qt::blue);
-            break;
-        case 4:
-            pen = QPen(Qt::red);
-            break;
-        case 5:
-            pen = QPen(Qt::green);
-            break;
-        case 6:
-            pen = QPen(Qt::cyan);
-            break;
-        case 7:
-            pen = QPen(Qt::gray);
-            break;
-        case 8:
-            pen = QPen(Qt::black);
-            break;
-        default:
-            pen = QPen(Qt::blue);
-            break;
-    }
 }
 
 void MainWindow::on_btnAdd_clicked()
@@ -96,11 +87,7 @@ void MainWindow::on_btnAdd_clicked()
         m_dotCircle = scene->addEllipse(r.width()/2, 0, 1, 1, QPen(Qt::black), QBrush(Qt::blue));
 
     scene->addLine(r.width()/2, r.height()/2, r.width()/2, r.height()/2, QPen(Qt::red));
-    QPen pen;
 
-    setPenColor(nbCotes, pen);
-
-    pen.setWidth(1);
 
     //formes a ajouter
     QPointF curPoint;
@@ -133,19 +120,17 @@ void MainWindow::on_btnAdd_clicked()
     for(int j = 1; j <= nbCotes; j++)
     {
         //première ligne qui part du milieu en haut
-        m_listLines.push_back(scene->addLine(QLineF(prevPoint, forme.at(j)), pen));
+        m_listLines.push_back(scene->addLine(QLineF(prevPoint, forme.at(j)), m_pens[nbCotes]));
 
         rad = oldrad + ((((360.0 / nbCotes) * j)) * PI)/180.0;
         curPoint.setX(halfWidth - (sin(rad) * smallPolyW));
         curPoint.setY(halfHeight - (cos(rad) * smallPolyH));
 
         //2eme ligne qui part du coin et rejoin le prochain point
-        m_listLines.push_back(scene->addLine(QLineF(curPoint, forme.at(j)), pen));
+        m_listLines.push_back(scene->addLine(QLineF(curPoint, forme.at(j)), m_pens[nbCotes]));
 
         //petite ligne au milieu
-        m_listLines.push_back(scene->addLine(QLineF(prevPoint, curPoint), pen));
-
-
+        m_listLines.push_back(scene->addLine(QLineF(prevPoint, curPoint), m_pens[nbCotes]));
 
         prevPoint = curPoint;
     }
