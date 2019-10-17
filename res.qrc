@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>snare1.wav</file>
+    </qresource>
+</RCC>
