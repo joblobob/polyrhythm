@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsEllipseItem>
-
+#include <QtMultimedia/QMediaPlayer>
 namespace Ui {
 class MainWindow;
 }
@@ -17,21 +17,29 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_btnAdd_clicked();
 
-    void on_pushButton_2_clicked();
+    void on_btnClear_clicked();
 
-    void on_pushButton_3_clicked();
+    void on_btnGo_clicked();
 
-    void on_pushButton_4_clicked();
+    void on_btnTimer_clicked();
+
+    void on_m_tstSpd_textChanged(const QString &arg1);
 
 private:
     Ui::MainWindow *ui;
 
     QGraphicsEllipseItem * m_bigCircle;
     QGraphicsEllipseItem * m_smallCircle;
+    QGraphicsEllipseItem * m_dotCircle;
     QVector<QGraphicsLineItem*> m_listLines;
     double m_pct;
+    bool m_play;
+    int m_spd;
+    QMap<int, QMediaPlayer*> m_listPlayers;
+    QTimer* m_speedTimer;
+
 };
 
 #endif // MAINWINDOW_H

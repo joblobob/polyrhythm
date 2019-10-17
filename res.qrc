@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>snare1.wav</file>
+        <file>1.wav</file>
+        <file>2.wav</file>
+        <file>3.wav</file>
+        <file>4.wav</file>
     </qresource>
 </RCC>
