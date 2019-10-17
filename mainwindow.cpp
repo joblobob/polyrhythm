@@ -34,13 +34,6 @@ void MainWindow::init() {
     addMedia("C:/dev/Polyrhythm/2.wav");
     addMedia("C:/dev/Polyrhythm/1.wav");
     addMedia("C:/dev/Polyrhythm/2.wav");
-
-    /*m_listPlayers[3]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/1.wav"));
-    m_listPlayers[4]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/2.wav"));
-    m_listPlayers[5]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/3.wav"));
-    m_listPlayers[6]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/1.wav"));
-    m_listPlayers[7]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/4.wav"));
-    m_listPlayers[8]->setMedia(QUrl::fromLocalFile("C:/dev/Polyrhythm/2.wav"));*/
 }
 
 void MainWindow::addMedia(const QString& pathToMedia){
@@ -54,29 +47,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_btnAdd_clicked()
+void MainWindow::setPenColor(int nbCotes, QPen& pen)
 {
-    QRect r = ui->graphicsView->rect();
-    int	nbCotes = ui->lineEdit->text().toInt();
-
-    if(ui->graphicsView->scene() == nullptr)
-        ui->graphicsView->setScene(new QGraphicsScene());
-
-    //cercle
-    QGraphicsScene* scene = ui->graphicsView->scene();
-
-    if(m_bigCircle == nullptr)
-        m_bigCircle = scene->addEllipse(0, 0, r.width() - 1, r.height() - 1, QPen(Qt::red));
-
-    if(m_smallCircle == nullptr)
-        m_smallCircle = scene->addEllipse(r.width()/2, 0, 15, 15, QPen(Qt::black), QBrush(Qt::red));
-
-    if(m_dotCircle == nullptr)
-        m_dotCircle = scene->addEllipse(r.width()/2, 0, 1, 1, QPen(Qt::black), QBrush(Qt::blue));
-
-    scene->addLine(r.width()/2, r.height()/2, r.width()/2, r.height()/2, QPen(Qt::red));
-    QPen pen;
-
     switch(nbCotes)
     {
         case 3:
@@ -101,58 +73,72 @@ void MainWindow::on_btnAdd_clicked()
             pen = QPen(Qt::blue);
             break;
     }
+}
+
+void MainWindow::on_btnAdd_clicked()
+{
+    QRect r = ui->graphicsView->rect();
+    int	nbCotes = ui->lineEdit->text().toInt();
+
+    if(ui->graphicsView->scene() == nullptr)
+        ui->graphicsView->setScene(new QGraphicsScene());
+
+    //cercle
+    QGraphicsScene* scene = ui->graphicsView->scene();
+
+    if(m_bigCircle == nullptr)
+        m_bigCircle = scene->addEllipse(0, 0, r.width() - 2, r.height() - 2, QPen(Qt::red));
+
+    if(m_smallCircle == nullptr)
+        m_smallCircle = scene->addEllipse(r.width()/2, 0, 15, 15, QPen(Qt::black), QBrush(Qt::red));
+
+    if(m_dotCircle == nullptr)
+        m_dotCircle = scene->addEllipse(r.width()/2, 0, 1, 1, QPen(Qt::black), QBrush(Qt::blue));
+
+    scene->addLine(r.width()/2, r.height()/2, r.width()/2, r.height()/2, QPen(Qt::red));
+    QPen pen;
+
+    setPenColor(nbCotes, pen);
 
     pen.setWidth(1);
 
     //formes a ajouter
-    double x = 0;
-    double y = 0;
-    double halfWidth = (r.width()/2);
-    double halfHeight = (r.height()/2);
-    double oldx = halfWidth;
-    double oldy = 0;
+    QPointF curPoint;
+    double halfWidth = (r.width()/2) + 1;
+    double halfHeight = (r.height()/2) + 1;
+
     int Surplus = 0;
 
-    int *iTabPremierPolyx = new int[nbCotes+1];
-    int *iTabPremierPolyy = new int[nbCotes+1];
+    QPointF prevPoint(halfWidth, 0);
+    QPolygonF forme(nbCotes+1);
 
-    int it = 1;
+    double rad = 0.0;
 
-    double rad = 0;
-
-    for(double i = 1.0f; i <= nbCotes; i++)
+    for(int i = 1; i <= nbCotes; i++)
     {
-        rad = ((((360.0f/nbCotes)*i)+Surplus) * PI)/180.0f;
-        x = halfWidth - (sin(rad) * halfWidth);
-        y = halfHeight - (cos(rad) * halfHeight);
+        rad = ((((360.0/nbCotes)*i)+Surplus) * PI)/180.0;
+        curPoint.setX( halfWidth - (sin(rad) * halfWidth));
+        curPoint.setY(halfHeight - (cos(rad) * halfHeight));
 
-        iTabPremierPolyx[it] = (int)x;
-        iTabPremierPolyy[it] = (int)y;
-        it++;
-
-    //	g2.drawLine((int)oldx, (int)oldy, (int)x, (int)y);		//Ligne cote du polygone
-
-    //	g2.drawLine((r.width/2), (r.height/2), (int)x, (int)y); //du centre vers le pic du polygone
-        oldx = x;
-        oldy = y;
+        forme[i] = curPoint;
+        prevPoint = curPoint;
     }
 
-    double oldrad = ((((360.0f/nbCotes)/2.0f)+Surplus) * PI)/180.0f;
-    oldx = halfWidth - (sin(oldrad) * (r.width()/6));
-    oldy = halfHeight - (cos(oldrad) * (r.height()/6));
+    double oldrad = ((((360.0/nbCotes)/2.0)+Surplus) * PI)/180.0;
+    prevPoint.setX(halfWidth - (sin(oldrad) * (r.width()/6.0)));
+    prevPoint.setY(halfHeight - (cos(oldrad) * (r.height()/6.0)));
 
-    for(double j = 1.0f; j <= nbCotes; j++)
+    for(int j = 1; j <= nbCotes; j++)
     {
-        m_listLines.push_back(scene->addLine((int)oldx, (int)oldy, iTabPremierPolyx[(int)j], iTabPremierPolyy[(int)j], pen));
+        m_listLines.push_back(scene->addLine(prevPoint.x(), prevPoint.y(), forme.at(j).x(), forme.at(j).y(), pen));
 
         rad = oldrad + ((((360.0 / nbCotes) * j)) * PI)/180.0;
-        x = halfWidth - (sin(rad) * (r.width()/6));
-        y = halfHeight - (cos(rad) * (r.height()/6));
+        curPoint.setX(halfWidth - (sin(rad) * (r.width()/6)));
+        curPoint.setY(halfHeight - (cos(rad) * (r.height()/6)));
 
-        m_listLines.push_back(scene->addLine((int)oldx, (int)oldy, (int)x, (int)y, pen));
-        m_listLines.push_back(scene->addLine((int)x, (int)y, iTabPremierPolyx[(int)j], iTabPremierPolyy[(int)j], pen));
-        oldx = x;
-        oldy = y;
+        m_listLines.push_back(scene->addLine(prevPoint.x(), prevPoint.y(),curPoint.x(), curPoint.y(), pen));
+        m_listLines.push_back(scene->addLine(curPoint.x(), curPoint.y(), forme.at(j).x(), forme.at(j).y(), pen));
+        prevPoint = curPoint;
     }
 }
 

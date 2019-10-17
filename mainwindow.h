@@ -16,6 +16,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void setPenColor(int nbCotes, QPen& pen);
+    
 private slots:
     void on_btnAdd_clicked();
 
